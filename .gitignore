@@ -1,0 +1,12 @@
+# 原始资料与派生数据（体积大，且可由 book/ + npm run ingest 重建）
+book/
+extract/
+资治通鉴.7z
+
+# 应用运行数据（含用户数据，勿入库，已在 app/.gitignore 二次覆盖）
+app/data/
+
+# 系统与编辑器杂项
+.DS_Store
+Thumbs.db
+*.log
