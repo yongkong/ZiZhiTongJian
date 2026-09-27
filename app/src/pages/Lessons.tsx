@@ -13,23 +13,24 @@ export function LessonList() {
   useEffect(() => { api.lessons().then(setLessons) }, [])
   if (!lessons) return null
   return (
-    <div className="mx-auto max-w-3xl space-y-6">
+    <div className="mx-auto max-w-6xl space-y-6">
       <div>
         <h1 className="font-classic text-2xl font-bold">课程</h1>
         <p className="text-sm text-muted-foreground">每课一个紧凑的学习单元：故事 → 文白对照 → 讲解 → 测验 → 间隔复习</p>
       </div>
-      <div className="space-y-3">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {lessons.map((l) => (
-          <Link key={l.slug} to={`/lessons/${l.slug}`}>
-            <Card className="transition-colors hover:border-primary/40">
-              <CardHeader className="pb-2">
-                <div className="flex items-center justify-between">
-                  <CardTitle className="font-classic text-lg">{l.title}</CardTitle>
+          <Link key={l.slug} to={`/lessons/${l.slug}`} className="group block h-full">
+            <Card className="h-full transition-colors group-hover:border-primary/40">
+              <CardHeader className="pb-3">
+                <div className="flex items-start justify-between gap-2">
+                  <CardTitle className="font-classic text-[15px] font-semibold leading-snug">{l.title}</CardTitle>
                   {l.status === 'done'
-                    ? <Badge>✓ 已完成 {l.best_score != null ? `· 最佳 ${l.best_score}` : ''}</Badge>
-                    : l.status === 'new' ? <Badge variant="outline">未开始</Badge> : <Badge variant="secondary">进行中</Badge>}
+                    ? <Badge className="shrink-0">✓ {l.best_score != null ? `最佳 ${l.best_score}` : '已完成'}</Badge>
+                    : l.status === 'new' ? <Badge variant="outline" className="shrink-0">未开始</Badge>
+                    : <Badge variant="secondary" className="shrink-0">进行中</Badge>}
                 </div>
-                <CardDescription>{l.subtitle}</CardDescription>
+                <CardDescription className="text-xs leading-relaxed">{l.subtitle}</CardDescription>
               </CardHeader>
             </Card>
           </Link>

@@ -8,6 +8,8 @@
     "build": "tsc -b && vite build",
     "start": "node server/index.js",
     "ingest": "python scripts/ingest.py",
+    "content:check": "node server/content/cli.js",
+    "test": "node --test",
     "lint": "oxlint",
     "preview": "vite preview"
   },

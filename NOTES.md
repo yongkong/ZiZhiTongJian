@@ -12,12 +12,12 @@
 ## 教学备注
 - 第一课定为「三家分晋」：既是全书开篇总纲（臣光曰名分论），又含全书第一个决策案例（智宣子选储、才德之辩），完美贴合用户三重目标
 - 每课结构：三点速览(keyPoints) → 故事 → 文白对照原文 → 讲解 → 与工作的联结(管理/工作/生活/学习四组) → 测验（检索练习）
-- **每课生产清单**（做新课时逐项完成）：
+- **每课生产清单**（做新课时逐项完成，目录 `app/server/content/lessons/<slug>/`，放好后 `npm run content:check` 校验）：
   1. content.keyPoints 三条速览
-  2. 选 3-5 组文白对照 passage（注意核对柏杨段落 seq，插图的章节段落号会后移！以 DB 实查为准）
-  3. 为所选柏杨章节配 highlights：boy（白话句）+ orig（文言句）各 8-12 条，点评一句话
+  2. 选 3-5 组文白对照 passage：引用用**锚文本**（段落前缀 ≥6 字，卷/书内唯一；跳段写多条锚）——不再手写 seq
+  3. 为所选柏杨章节配 highlights：锚（定位章节的柏杨段前缀）+ pattern（要涂色的句子，须与语料逐字一致）；boy（白话句）+ orig（文言句）各 8-12 条，点评一句话
   4. insight 四场景组（管理/工作/生活/学习）各 2 条
-  5. quiz 6 题 → 自动生成复习卡片
+  5. quiz 6 题 → 自动生成复习卡片（按 front 三向同步，改题保进度）
 - 复习用简化 SM-2 间隔重复，测验答错自动进复习队列
 - 高亮机制：highlights 表按 section_id + kind('boy'/'orig') 绑定，逐字匹配（无正则）；用户喜欢黄色高亮 + 悬停点评的形式
 
@@ -29,3 +29,11 @@
 - 前端：src/lib/auth.tsx（AuthProvider/RequireAuth 路由守卫）+ /login 页（登录/注册二合一 Tab）；头部显示用户名和退出按钮
 - 复习卡片 card_state 按用户懒创建：首次答题时插入该用户的卡片状态，种子不再写全局 card_state
 - **免费学习模式（用户明确要求）**：游客无需注册即可浏览/试学全部内容（课程、阅读器、柏杨版、测验、复习卡练习）；stats 与复习队列对游客公开（返回全 0 进度/可练卡片）；仅写进度接口（标记已读、保存成绩、复习排期）需登录。前端各写入点对游客降级为"本地生效+轻提示"（toast/提示条），绝不挡路；注册只为保存进度
+
+## 内容管线 A→B 落地（2026-09-27，架构评审共识）
+- **目录**：`app/server/content/lessons/<slug>/{lesson.json, highlights.json}`——每课一夹，文件是事实源，DB 只存解析结果；加课 = 加目录，零代码改动
+- **server/db.js**：连接 + schema + 老库迁移的唯一入口（index.js 与 content CLI 共用）
+- **server/content/**（深模块，见 CONTEXT.md 词汇）：`loadContent(db)` 启动时 读盘→校验→解析锚→播种，任何错误**中文报错 + exit(1) fail fast**（启动即检测语料漂移）；`check(db)` 供 `npm run content:check` 不启服务器出全量报告
+- **锚寻址（B）**：passage 引用 `{volume|book, anchor, span}`（段落前缀、卷/书内唯一、跳段多条）；解析后写回 DB 为 `{volume, seqs}/{section, seqs}`，**API 与前端零改动**。highlights 用 `{book, anchor, pattern}`，pattern 落地校验（boy 按章节段落、orig 按对应 passage 原文逐字存在）——迁移时揪出 2 条直角引号写错导致从未高亮过的死数据，已按语料修正
+- **卡片三向同步**：按 `(lesson_slug, front)` 增删改，front 不变即同一张卡，复习进度保留；高亮纯种子数据每次全量重建；删除课程目录时连带清理 cards/card_state/lesson_state
+- **测试**：`npm test` = node:test（零新依赖，23 个用例覆盖解析器/校验器纯函数）
