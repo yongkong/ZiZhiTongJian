@@ -7,7 +7,7 @@ import { ScrollArea } from '@/components/ui/scroll-area'
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '@/components/ui/sheet'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { cn } from '@/lib/utils'
-import { api, type Volume } from '@/lib/api'
+import { api, type LessonSummary, type Volume } from '@/lib/api'
 
 export const initOpen = () => typeof window !== 'undefined' && window.location.hash === '#toc'
 
@@ -278,6 +278,72 @@ export interface LessonTocItem {
   id: string
   title: string
   kind: string
+}
+
+/** 课程页全部课程抽屉: 全部课按 seq 编号网格, 当前课高亮, 已完成课描边 */
+export function AllLessonsNav({
+  open,
+  onOpenChange,
+  lessons,
+  currentSlug,
+}: {
+  open: boolean
+  onOpenChange: (v: boolean) => void
+  lessons: LessonSummary[] | null
+  currentSlug: string
+}) {
+  const curRef = useRef<HTMLAnchorElement | null>(null)
+
+  useEffect(() => {
+    if (open && lessons && curRef.current) curRef.current.scrollIntoView({ block: 'center' })
+  }, [open, lessons])
+
+  return (
+    <>
+      <Button variant="outline" size="sm" onClick={() => onOpenChange(true)} aria-expanded={open}>
+        ☰ 全部课程
+      </Button>
+      <Sheet open={open} onOpenChange={onOpenChange}>
+        <SheetContent side="right" className="w-[22rem] p-0 sm:w-80">
+          <SheetHeader className="border-b px-4 py-3">
+            <SheetTitle className="font-classic text-base">全部课程</SheetTitle>
+            <SheetDescription className="text-xs">
+              {lessons ? `${lessons.length} 课按顺序学习 · 当前课高亮` : '加载中…'}
+            </SheetDescription>
+          </SheetHeader>
+          <ScrollArea className="h-[calc(100%-5rem)]">
+            {!lessons ? (
+              <div className="grid grid-cols-8 gap-1 p-4">
+                {Array.from({ length: 48 }, (_, i) => <Skeleton key={i} className="h-7 w-full" />)}
+              </div>
+            ) : (
+              <div className="grid grid-cols-8 gap-1 p-4">
+                {[...lessons].sort((a, b) => a.seq - b.seq).map((l) => (
+                  <Link
+                    key={l.slug}
+                    to={`/lessons/${l.slug}`}
+                    onClick={() => onOpenChange(false)}
+                    ref={l.slug === currentSlug ? curRef : undefined}
+                    className={cn(
+                      'rounded-md border px-1 py-1 text-center text-xs transition-colors',
+                      l.slug === currentSlug
+                        ? 'border-primary bg-primary text-primary-foreground'
+                        : l.status === 'done'
+                          ? 'border-primary/30 bg-primary/10 text-primary'
+                          : 'hover:border-primary/40 hover:bg-accent/60',
+                    )}
+                    title={`${l.title} — ${l.subtitle}`}
+                  >
+                    {l.seq}
+                  </Link>
+                ))}
+              </div>
+            )}
+          </ScrollArea>
+        </SheetContent>
+      </Sheet>
+    </>
+  )
 }
 
 /** 课程页目录抽屉: 各小节锚点跳转 */

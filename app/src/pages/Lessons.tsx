@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { PassageView } from '@/components/PassageView'
 import { Quiz } from '@/components/Quiz'
-import { LessonNav, ReaderFloat, initOpen, type LessonTocItem } from '@/components/ReaderNav'
+import { LessonNav, AllLessonsNav, ReaderFloat, initOpen, type LessonTocItem } from '@/components/ReaderNav'
 import { api, type LessonSummary } from '@/lib/api'
 
 export function LessonList() {
@@ -45,8 +45,11 @@ type LessonData = Awaited<ReturnType<typeof api.lesson>>
 export function LessonDetail() {
   const { slug } = useParams()
   const [lesson, setLesson] = useState<LessonData | null>(null)
+  const [allLessons, setAllLessons] = useState<LessonSummary[] | null>(null)
   const [tocOpen, setTocOpen] = useState(initOpen)
+  const [allOpen, setAllOpen] = useState(false)
   useEffect(() => { if (slug) api.lesson(slug).then(setLesson) }, [slug])
+  useEffect(() => { api.lessons().then(setAllLessons) }, [])
   if (!lesson) return null
 
   const c = lesson.content
@@ -58,6 +61,11 @@ export function LessonDetail() {
   tocItems.push({ id: 'quiz', title: '检验理解', kind: 'quiz' })
   tocItems.push({ id: 'resources', title: '延伸资源', kind: 'resources' })
 
+  const sorted = allLessons ? [...allLessons].sort((a, b) => a.seq - b.seq) : null
+  const idx = sorted?.findIndex((l) => l.slug === lesson.slug) ?? -1
+  const prev = sorted && idx > 0 ? sorted[idx - 1] : null
+  const next = sorted && idx >= 0 && idx < sorted.length - 1 ? sorted[idx + 1] : null
+
   return (
     <div className="mx-auto max-w-3xl space-y-8 pb-16">
       <ReaderFloat onToc={() => setTocOpen(true)} />
@@ -65,6 +73,7 @@ export function LessonDetail() {
         <div className="flex items-center gap-2">
           <Button variant="ghost" size="sm" asChild><Link to="/lessons">← 课程列表</Link></Button>
           <LessonNav open={tocOpen} onOpenChange={setTocOpen} items={tocItems} />
+          <AllLessonsNav open={allOpen} onOpenChange={setAllOpen} lessons={allLessons} currentSlug={lesson.slug} />
         </div>
         <h1 className="font-classic text-2xl font-bold leading-snug">{lesson.title}</h1>
         <p className="text-muted-foreground">{lesson.subtitle}</p>
@@ -183,6 +192,37 @@ export function LessonDetail() {
           </CardContent>
         </Card>
       </div>
+
+      {(prev || next) && (
+        <div className="grid grid-cols-1 gap-3 pt-2 sm:grid-cols-2">
+          {prev ? (
+            <Link to={`/lessons/${prev.slug}`} className="group">
+              <Card className="h-full transition-colors group-hover:border-primary/40">
+                <CardContent className="p-4">
+                  <div className="text-xs text-muted-foreground">← 上一课 · 第 {prev.seq} 课</div>
+                  <div className="font-classic mt-1 text-sm font-semibold leading-snug">
+                    {prev.title.replace(/^第 \d+ 课 · /, '')}
+                  </div>
+                </CardContent>
+              </Card>
+            </Link>
+          ) : (
+            <div className="hidden sm:block" />
+          )}
+          {next && (
+            <Link to={`/lessons/${next.slug}`} className="group sm:text-right">
+              <Card className="h-full transition-colors group-hover:border-primary/40">
+                <CardContent className="p-4">
+                  <div className="text-xs text-muted-foreground">下一课 · 第 {next.seq} 课 →</div>
+                  <div className="font-classic mt-1 text-sm font-semibold leading-snug">
+                    {next.title.replace(/^第 \d+ 课 · /, '')}
+                  </div>
+                </CardContent>
+              </Card>
+            </Link>
+          )}
+        </div>
+      )}
     </div>
   )
 }
