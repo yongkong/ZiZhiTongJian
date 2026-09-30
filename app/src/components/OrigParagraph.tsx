@@ -1,7 +1,9 @@
+'use client'
+
 import { useState } from 'react'
 import { Badge } from '@/components/ui/badge'
 import { HighlightText } from '@/components/HighlightText'
-import type { Highlight, Segment } from '@/lib/api'
+import type { Highlight, Segment } from '@/lib/types'
 
 export function OrigParagraph({ segments, highlights = [] }: { segments: Segment[]; highlights?: Highlight[] }) {
   const [open, setOpen] = useState(false)
@@ -21,16 +23,16 @@ export function OrigParagraph({ segments, highlights = [] }: { segments: Segment
           {!noteOnly ? (
             <button
               onClick={() => setOpen(!open)}
-              className="inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 text-xs text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+              className="inline-flex items-center gap-1.5 rounded-sm px-1 py-0.5 text-xs text-muted-foreground transition-colors hover:text-foreground"
             >
-              <span className="inline-block size-1.5 rounded-full bg-primary/60" />
+              <span className="font-classic text-primary/70">〔注〕</span>
               胡注 {notes.length} 条（{open ? '收起' : '展开'}）
             </button>
           ) : null}
           {(open || noteOnly) && (
-            <div className="tj-note mt-1.5 space-y-2 rounded-md bg-muted/60 p-3">
+            <div className="tj-note mt-1.5 space-y-2 py-1">
               {notes.map((s, i) => (
-                <p key={i} className="tj-classic">〔注〕{s.n}</p>
+                <p key={i}>{s.n}</p>
               ))}
             </div>
           )}

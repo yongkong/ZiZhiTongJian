@@ -1,19 +1,18 @@
+'use client'
+
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import Link from 'next/link'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Progress } from '@/components/ui/progress'
-import { useAuth } from '@/lib/auth'
-import { api, type QuizItem } from '@/lib/api'
+import type { QuizItem } from '@/lib/types'
 
-export function Quiz({ slug, quiz }: { slug: string; quiz: QuizItem[] }) {
-  const { user } = useAuth()
+export function Quiz({ quiz, nextSlug, nextSeq }: { quiz: QuizItem[]; nextSlug: string | null; nextSeq: number | null }) {
   const [idx, setIdx] = useState(0)
   const [picked, setPicked] = useState<number | null>(null)
   const [correct, setCorrect] = useState(0)
   const [finished, setFinished] = useState(false)
-  const [saved, setSaved] = useState(false)
 
   const item = quiz[idx]
 
@@ -32,9 +31,11 @@ export function Quiz({ slug, quiz }: { slug: string; quiz: QuizItem[] }) {
     }
   }
 
-  const save = async () => {
-    await api.completeLesson(slug, correct)
-    setSaved(true)
+  const restart = () => {
+    setIdx(0)
+    setPicked(null)
+    setCorrect(0)
+    setFinished(false)
   }
 
   if (finished) {
@@ -44,36 +45,23 @@ export function Quiz({ slug, quiz }: { slug: string; quiz: QuizItem[] }) {
           <CardTitle>本课测验完成</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <p className="text-3xl font-semibold">
+          <p className="font-classic text-3xl font-semibold">
             {correct} / {quiz.length}
             <span className="ml-2 text-sm font-normal text-muted-foreground">
-              {correct === quiz.length ? '全对！名分已定，礼崩不侵。' : correct >= quiz.length * 0.6 ? (user ? '扎实。错题已进入复习队列。' : '扎实！') : (user ? '再来一遍会更好，错题会自动安排复习。' : '再来一遍会更好。')}
+              {correct === quiz.length ? '全对！名分已定，礼崩不侵。' : correct >= quiz.length * 0.6 ? '扎实。' : '再来一遍会更好。'}
             </span>
           </p>
-          {!user ? (
-            <>
-              <p className="text-sm text-muted-foreground">
-                测验本身不需要账号。想记录成绩、并让错题按遗忘曲线自动安排复习，
-                <Link className="text-primary underline" to="/login">登录/注册</Link>即可——不注册也可以继续学后面的内容。
-              </p>
-              <div className="flex gap-3">
-                <Button asChild variant="outline">
-                  <Link to="/lessons">继续下一课 →</Link>
-                </Button>
-              </div>
-            </>
-          ) : !saved ? (
-            <Button onClick={save}>记录成绩并生成复习卡片</Button>
-          ) : (
-            <div className="flex gap-3">
-              <Button asChild variant="outline">
-                <Link to="/review">去复习</Link>
+          <div className="flex flex-wrap gap-3">
+            <Button variant="outline" onClick={restart}>再测一遍</Button>
+            {nextSlug && (
+              <Button asChild>
+                <Link href={`/lessons/${nextSlug}`}>继续第 {nextSeq} 课 →</Link>
               </Button>
-              <Button asChild variant="outline">
-                <Link to="/">回到仪表盘</Link>
-              </Button>
-            </div>
-          )}
+            )}
+            <Button asChild variant="outline">
+              <Link href="/lessons">回课程列表</Link>
+            </Button>
+          </div>
         </CardContent>
       </Card>
     )
@@ -110,8 +98,10 @@ export function Quiz({ slug, quiz }: { slug: string; quiz: QuizItem[] }) {
         </div>
         {picked !== null && (
           <Alert>
-            <AlertTitle>{picked === item.answer ? '✓ 正确' : '✗ 再想想'}</AlertTitle>
-            <AlertDescription>{item.explain}</AlertDescription>
+            <AlertTitle className="font-classic font-semibold">
+              {picked === item.answer ? '对。' : '误。再想想——'}
+            </AlertTitle>
+            <AlertDescription className="tj-classic text-sm leading-7">{item.explain}</AlertDescription>
           </Alert>
         )}
         {picked !== null && (

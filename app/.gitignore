@@ -10,6 +10,8 @@ lerna-debug.log*
 node_modules
 dist
 dist-ssr
+out
+.next
 *.local
 
 # Editor directories and files
@@ -23,8 +25,13 @@ dist-ssr
 *.sln
 *.sw?
 
-# 学习数据库: 含用户数据, 由 npm run ingest 重新生成
+# 学习语料库 (含用户历史数据, 由 npm run ingest 重新生成; content:export 只读它)
 /data
 
 # Python
 __pycache__/
+
+# 柏杨地图图片 (由 scripts/compress-boyang-img.py 从 ../extract 压缩生成, 体量大不入库)
+public/boyang-img/
+
+.env*

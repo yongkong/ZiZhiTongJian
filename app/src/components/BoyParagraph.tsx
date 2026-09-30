@@ -1,5 +1,7 @@
+'use client'
+
 import { HighlightText } from '@/components/HighlightText'
-import type { BoyPara, Highlight } from '@/lib/api'
+import type { BoyPara, Highlight } from '@/lib/types'
 
 export function BoyParagraph({ p, highlights = [] }: { p: BoyPara; highlights?: Highlight[] }) {
   const body = <HighlightText text={p.text} highlights={highlights} />

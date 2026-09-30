@@ -1,0 +1,255 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+@import "@fontsource-variable/geist";
+
+/* 显式源: 只扫描 src/, 避免 Tailwind 去扫 content/ 与 public/ 的大体量数据文件 */
+@source "../";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+    --font-heading: var(--font-sans);
+    --font-sans: 'Geist Variable', 'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    --font-classic: 'Noto Serif SC', 'Source Han Serif SC', 'Songti SC', 'STZhongsong', 'STSong', 'SimSun', serif;
+    --color-sidebar-ring: var(--sidebar-ring);
+    --color-sidebar-border: var(--sidebar-border);
+    --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+    --color-sidebar-accent: var(--sidebar-accent);
+    --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+    --color-sidebar-primary: var(--sidebar-primary);
+    --color-sidebar-foreground: var(--sidebar-foreground);
+    --color-sidebar: var(--sidebar);
+    --color-chart-5: var(--chart-5);
+    --color-chart-4: var(--chart-4);
+    --color-chart-3: var(--chart-3);
+    --color-chart-2: var(--chart-2);
+    --color-chart-1: var(--chart-1);
+    --color-ring: var(--ring);
+    --color-input: var(--input);
+    --color-border: var(--border);
+    --color-rule-strong: var(--rule-strong);
+    --color-vermilion: var(--vermilion);
+    --color-gamboge: var(--gamboge);
+    --color-indigo-link: var(--indigo-link);
+    --color-destructive: var(--destructive);
+    --color-accent-foreground: var(--accent-foreground);
+    --color-accent: var(--accent);
+    --color-muted-foreground: var(--muted-foreground);
+    --color-muted: var(--muted);
+    --color-secondary-foreground: var(--secondary-foreground);
+    --color-secondary: var(--secondary);
+    --color-primary-foreground: var(--primary-foreground);
+    --color-primary: var(--primary);
+    --color-popover-foreground: var(--popover-foreground);
+    --color-popover: var(--popover);
+    --color-card-foreground: var(--card-foreground);
+    --color-card: var(--card);
+    --color-foreground: var(--foreground);
+    --color-background: var(--background);
+    --radius-sm: calc(var(--radius) * 0.6);
+    --radius-md: calc(var(--radius) * 0.8);
+    --radius-lg: var(--radius);
+    --radius-xl: calc(var(--radius) * 1.4);
+    --radius-2xl: calc(var(--radius) * 1.8);
+    --radius-3xl: calc(var(--radius) * 2.2);
+    --radius-4xl: calc(var(--radius) * 2.6);
+}
+
+/* 纸墨主题：宣纸底 · 墨字 · 朱砂点缀 · 界行分区
+   设计系统见 design-system/tongjian-xuetang/MASTER.md */
+:root {
+    --background: oklch(0.975 0.008 90);
+    --foreground: oklch(0.245 0.012 60);
+    --card: oklch(0.99 0.004 90);
+    --card-foreground: oklch(0.245 0.012 60);
+    --popover: oklch(0.99 0.004 90);
+    --popover-foreground: oklch(0.245 0.012 60);
+    --primary: oklch(0.46 0.115 28);
+    --primary-foreground: oklch(0.98 0.005 90);
+    --secondary: oklch(0.935 0.012 85);
+    --secondary-foreground: oklch(0.3 0.015 55);
+    --muted: oklch(0.94 0.008 88);
+    --muted-foreground: oklch(0.5 0.015 60);
+    --accent: oklch(0.93 0.02 80);
+    --accent-foreground: oklch(0.3 0.02 50);
+    --destructive: oklch(0.577 0.245 27.325);
+    --border: oklch(0.9 0.012 80);
+    --rule-strong: oklch(0.72 0.02 60);
+    --vermilion: oklch(0.55 0.13 30);
+    --gamboge: oklch(0.92 0.1 95);
+    --indigo-link: oklch(0.45 0.06 240);
+    --input: oklch(0.9 0.012 80);
+    --ring: oklch(0.6 0.08 30);
+    --chart-1: oklch(0.87 0 0);
+    --chart-2: oklch(0.556 0 0);
+    --chart-3: oklch(0.439 0 0);
+    --chart-4: oklch(0.371 0 0);
+    --chart-5: oklch(0.269 0 0);
+    /* 方角意象：radius 系全部派生自此处（lg=3px, xl≈4px） */
+    --radius: 0.1875rem;
+    --sidebar: oklch(0.96 0.01 88);
+    --sidebar-foreground: oklch(0.245 0.012 60);
+    --sidebar-primary: oklch(0.46 0.115 28);
+    --sidebar-primary-foreground: oklch(0.98 0.005 90);
+    --sidebar-accent: oklch(0.93 0.015 85);
+    --sidebar-accent-foreground: oklch(0.3 0.015 55);
+    --sidebar-border: oklch(0.9 0.012 80);
+    --sidebar-ring: oklch(0.6 0.08 30);
+}
+
+.dark {
+    --background: oklch(0.17 0.008 60);
+    --foreground: oklch(0.93 0.005 85);
+    --card: oklch(0.21 0.008 60);
+    --card-foreground: oklch(0.93 0.005 85);
+    --popover: oklch(0.21 0.008 60);
+    --popover-foreground: oklch(0.93 0.005 85);
+    --primary: oklch(0.68 0.12 30);
+    --primary-foreground: oklch(0.16 0.01 60);
+    --secondary: oklch(0.26 0.01 60);
+    --secondary-foreground: oklch(0.93 0.005 85);
+    --muted: oklch(0.26 0.01 60);
+    --muted-foreground: oklch(0.68 0.01 70);
+    --accent: oklch(0.28 0.015 55);
+    --accent-foreground: oklch(0.93 0.005 85);
+    --destructive: oklch(0.704 0.191 22.216);
+    --border: oklch(1 0 0 / 12%);
+    --rule-strong: oklch(0.42 0.015 60);
+    --vermilion: oklch(0.68 0.12 30);
+    --gamboge: oklch(0.35 0.07 95);
+    --indigo-link: oklch(0.65 0.06 240);
+    --input: oklch(1 0 0 / 15%);
+    --ring: oklch(0.55 0.06 30);
+    --chart-1: oklch(0.87 0 0);
+    --chart-2: oklch(0.556 0 0);
+    --chart-3: oklch(0.439 0 0);
+    --chart-4: oklch(0.371 0 0);
+    --chart-5: oklch(0.269 0 0);
+    --sidebar: oklch(0.21 0.008 60);
+    --sidebar-foreground: oklch(0.93 0.005 85);
+    --sidebar-primary: oklch(0.68 0.12 30);
+    --sidebar-primary-foreground: oklch(0.16 0.01 60);
+    --sidebar-accent: oklch(0.28 0.015 55);
+    --sidebar-accent-foreground: oklch(0.93 0.005 85);
+    --sidebar-border: oklch(1 0 0 / 12%);
+    --sidebar-ring: oklch(0.55 0.06 30);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+    }
+  body {
+    @apply bg-background text-foreground;
+    }
+  html {
+    @apply font-sans;
+    }
+}
+
+/* ---------- 中文阅读排版（经大注小） ---------- */
+.tj-classic {
+  font-family: var(--font-classic);
+  line-height: 2;
+  letter-spacing: 0.02em;
+}
+.tj-orig {
+  font-size: 1.075rem;
+}
+.tj-note {
+  font-family: var(--font-classic);
+  font-size: 0.85rem;
+  line-height: 1.8;
+  color: var(--muted-foreground);
+  border-left: 1px solid var(--rule-strong);
+  padding-left: 0.75rem;
+}
+.tj-boy {
+  font-size: 1.02rem;
+  line-height: 1.95;
+}
+.tj-sima {
+  border-left: 3px solid var(--primary);
+  padding-left: 0.9rem;
+}
+.tj-boyang {
+  background: var(--secondary);
+  border-radius: var(--radius-sm);
+  padding: 0.75rem 1rem;
+}
+
+/* ---------- 朱文章：印章式徽记 ---------- */
+.tj-seal {
+  font-family: var(--font-classic);
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  border-radius: 2px;
+}
+
+/* ---------- 版心条：细线夹疏排小字 ---------- */
+.tj-banzhu {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  font-family: var(--font-classic);
+  font-size: 0.75rem;
+  letter-spacing: 0.3em;
+  color: var(--muted-foreground);
+}
+.tj-banzhu::before,
+.tj-banzhu::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+/* ---------- 版框：外粗内细双线（用于核心内容区） ---------- */
+.tj-framed {
+  border: 1px solid color-mix(in oklch, var(--rule-strong) 55%, transparent);
+  outline: 1px solid var(--border);
+  outline-offset: -4px;
+}
+
+/* ---------- 藤黄仿批：重点句高亮（不占满行高，底部四分之三着色） ---------- */
+.tj-mark {
+  background: linear-gradient(
+    transparent 16%,
+    var(--gamboge) 16%,
+    var(--gamboge) 86%,
+    transparent 86%
+  );
+  color: inherit;
+  padding: 0 0.05em;
+  border-bottom: 1px solid transparent;
+  transition: border-color 150ms ease-out;
+  cursor: help;
+}
+.tj-mark:hover {
+  border-bottom: 1px dashed var(--vermilion);
+}
+
+/* ---------- 朱批框：批语/提示 ---------- */
+.tj-comment {
+  border: 1px solid color-mix(in oklch, var(--vermilion) 45%, transparent);
+  border-left: 3px solid var(--vermilion);
+  background: var(--card);
+  color: var(--foreground);
+  border-radius: 2px;
+  padding: 0.625rem 0.875rem;
+}
+
+/* 纸不动：按压缩放反馈移除，仅保留颜色过渡 */
+[data-slot='button']:active {
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

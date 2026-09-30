@@ -1,6 +1,8 @@
+'use client'
+
 import { useMemo } from 'react'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
-import type { Highlight } from '@/lib/api'
+import type { Highlight } from '@/lib/types'
 
 /**
  * 把 text 中所有 highlights.pattern 命中的片段包成黄色 <mark>。
@@ -42,11 +44,10 @@ export function HighlightText({ text, highlights }: { text: string; highlights: 
         p.hl ? (
           <Tooltip key={i}>
             <TooltipTrigger asChild>
-              <mark className="rounded-sm bg-amber-200/80 px-0.5 text-inherit dark:bg-amber-400/30">
-                {p.s}
-              </mark>
+              <mark className="tj-mark">{p.s}</mark>
             </TooltipTrigger>
             <TooltipContent side="top" className="max-w-72 font-classic text-xs leading-6">
+              <span className="tj-seal mr-1 inline-block border border-primary-foreground/40 px-1 text-[10px] leading-4">批</span>
               {p.hl.note}
             </TooltipContent>
           </Tooltip>
