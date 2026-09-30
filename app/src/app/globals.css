@@ -253,3 +253,11 @@
     transition-duration: 0.01ms !important;
   }
 }
+
+/* 移动端页头导航横向滚动时隐藏滚动条 */
+.no-scrollbar {
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
